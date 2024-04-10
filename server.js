@@ -27,7 +27,7 @@ const Role = db.role;
 // });
 
 // simple route
-app.get("/", (req, res) => {
+app.get("/health", (req, res) => {
   res.json({ message: "Welcome to diamond application." });
 });
 
