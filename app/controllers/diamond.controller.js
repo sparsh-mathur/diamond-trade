@@ -17,25 +17,21 @@ exports.getAllDiamonds = (req, res) => {
 };
 
 exports.createDiamond = (req, res) => {
-  if (
-    !req.body.name ||
-    !req.body.price ||
-    !req.body.category ||
-    !req.body.subcategory
-  ) {
+  const { name, price, category, subcategory } = req.body;
+  if (!name || !price || !category || !subcategory) {
     res.status(400).send({ message: "data is missing" });
     return;
   }
   // Save Diamond to Database
   Diamonds.create({
-    name: req.body.name,
-    price: req.body.price,
-    category: req.body.category,
-    subcategory: req.body.subcategory,
+    name,
+    price,
+    category,
+    subcategory,
   })
     .then((diamond) => {
-      res.send({
-        message: "Diamond registered successfully!",
+      res.status(201).send({
+        message: "Diamond created successfully!",
         data: diamond.dataValues,
       });
     })
@@ -43,15 +39,3 @@ exports.createDiamond = (req, res) => {
       res.status(500).send({ message: err.message });
     });
 };
-
-// exports.userBoard = (req, res) => {
-//   res.status(200).send("User Content.");
-// };
-
-// exports.adminBoard = (req, res) => {
-//   res.status(200).send("Admin Content.");
-// };
-
-// exports.moderatorBoard = (req, res) => {
-//   res.status(200).send("Moderator Content.");
-// };

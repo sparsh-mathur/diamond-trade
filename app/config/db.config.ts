@@ -13,4 +13,5 @@ module.exports = {
     acquire: 30000,
     idle: 10000,
   },
+  CLOUD_CONNECTION_STRING: process.env.CLOUD_CONNECTION_STRING,
 };

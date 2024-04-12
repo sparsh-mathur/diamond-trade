@@ -13,8 +13,5 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING,
     },
   });
-  // Diamonds.sync({ alter: true }).then(() => {
-  //   console.log("Diamonds Model synced");
-  // });
   return Diamonds;
 };
