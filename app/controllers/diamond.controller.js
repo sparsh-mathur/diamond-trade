@@ -39,3 +39,56 @@ exports.createDiamond = (req, res) => {
       res.status(500).send({ message: err.message });
     });
 };
+
+exports.deleteDiamond = (req, res) => {
+  const { diamondId } = req.params;
+  if (!diamondId) {
+    res.status(400).send({ message: "diamondId is missing" });
+    return;
+  }
+  // Save Diamond to Database
+  Diamonds.destroy({
+    where: {
+      id: diamondId,
+    },
+  })
+    .then(() => {
+      res.status(200).send({
+        message: "Diamond deleted successfully!",
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
+};
+
+exports.editDiamond = (req, res) => {
+  const { diamondId } = req.params;
+  const { name, price, category, subcategory } = req.body;
+  if (!diamondId || !name || !price || !category || !subcategory) {
+    res.status(400).send({ message: "data is missing" });
+    return;
+  }
+  // Save Diamond to Database
+  Diamonds.update(
+    {
+      name,
+      price,
+      category,
+      subcategory,
+    },
+    {
+      where: {
+        id: diamondId,
+      },
+    }
+  )
+    .then(() => {
+      res.status(200).send({
+        message: "Diamond updated successfully!",
+      });
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
+};
