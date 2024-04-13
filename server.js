@@ -45,6 +45,8 @@ require("./app/routes/diamond.routes")(app);
 require("./app/routes/news.routes")(app);
 require("./app/routes/referrals.routes")(app);
 require("./app/routes/orders.routes")(app);
+require("./app/routes/portfolio.routes")(app);
+require("./app/routes/bankDetails.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.SERVER_PORT || 8080;
