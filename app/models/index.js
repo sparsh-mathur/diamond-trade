@@ -24,6 +24,8 @@ db.user = require("../models/user.model.js")(sequelize, Sequelize);
 db.diamonds = require("../models/diamonds.model.js")(sequelize, Sequelize);
 db.orders = require("../models/orders.model.js")(sequelize, Sequelize);
 db.news = require("../models/news.model.js")(sequelize, Sequelize);
+db.referrals = require("../models/referrals.model.js")(sequelize, Sequelize);
+// db.referrals = require("../models/portfolio.model.js")(sequelize, Sequelize);
 
 db.ROLES = ["user", "admin", "moderator"];
 

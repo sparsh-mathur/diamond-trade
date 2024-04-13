@@ -69,7 +69,6 @@ exports.editDiamond = (req, res) => {
     res.status(400).send({ message: "data is missing" });
     return;
   }
-  // Save Diamond to Database
   Diamonds.update(
     {
       name,

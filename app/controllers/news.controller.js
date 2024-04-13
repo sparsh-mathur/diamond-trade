@@ -26,7 +26,9 @@ exports.createNews = (req, res) => {
     publishedAt: new Date(),
   })
     .then((news) => {
-      res.send({ message: "news created successfully", data: news });
+      res
+        .status(201)
+        .send({ message: "news created successfully", data: news });
     })
     .catch((err) => {
       res.status(500).send({ message: err.message });

@@ -2,11 +2,11 @@ module.exports = (sequelize, Sequelize) => {
   const Order = sequelize.define(
     "Order",
     {
-      customerName: {
+      customerId: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      productName: {
+      productId: {
         type: Sequelize.STRING,
         allowNull: false,
       },
@@ -21,6 +21,11 @@ module.exports = (sequelize, Sequelize) => {
       totalPrice: {
         type: Sequelize.FLOAT,
         allowNull: false,
+      },
+      status: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: "pending",
       },
     },
     {

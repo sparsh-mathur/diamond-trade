@@ -13,6 +13,9 @@ module.exports = (sequelize, Sequelize) => {
       type: Sequelize.STRING,
       defaultValue: "user",
     },
+    referralCode: {
+      type: Sequelize.STRING,
+    },
   });
 
   return User;
