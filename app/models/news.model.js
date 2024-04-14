@@ -18,6 +18,10 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.DATE,
         allowNull: false,
       },
+      imageUrl: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
     },
     {
       tableName: "news",

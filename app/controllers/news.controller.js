@@ -19,11 +19,13 @@ exports.createNews = (req, res) => {
     res.status(400).send({ message: "Title and content are required!" });
     return;
   }
+
   News.create({
     title,
     content,
     author: req.userId || "admin",
     publishedAt: new Date(),
+    imageUrl: req.file.location,
   })
     .then((news) => {
       res
