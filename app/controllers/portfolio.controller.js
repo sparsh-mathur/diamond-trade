@@ -70,7 +70,10 @@ exports.addMoney = (req, res) => {
         })
         .then((portfolio) => {
           console.log("portfolio updated", portfolio);
-          res.send(portfolio);
+          res.send({
+            message: `${walletAmount} Rs added to wallet successfully`,
+            data: portfolio,
+          });
         })
         .catch((err) => {
           console.log("error in updating", err);
