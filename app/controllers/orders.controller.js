@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { orders: Orders, portfolio: Portfolio } = require("../models");
 
 exports.postOrder = async (req, res) => {
@@ -22,6 +23,12 @@ exports.postOrder = async (req, res) => {
           userId: order.customerId,
         },
       });
+
+      if (userPortfolio.walletAmount < order.totalPrice) {
+        res.status(400).send({ message: "Insufficient funds" });
+        return;
+      }
+
       let products = JSON.parse(userPortfolio.products);
       products = [
         ...products,
@@ -32,12 +39,13 @@ exports.postOrder = async (req, res) => {
         },
       ];
       userPortfolio.products = JSON.stringify(products);
+      userPortfolio.walletAmount -= order.totalPrice;
       userPortfolio.save();
-      res.send({
-        message: "order has been created, and your portfolio updated",
-        data: order,
-      });
     }
+    res.send({
+      message: "order has been created, and your portfolio updated",
+      data: order,
+    });
   } catch (error) {
     console.error(error.message);
     res.status(500).send({ message: error.message });
@@ -45,7 +53,11 @@ exports.postOrder = async (req, res) => {
 };
 
 exports.getAllPendingOrders = (req, res) => {
-  Orders.findAll({ where: { status: "pending" } })
+  Orders.findAll({
+    where: {
+      [Op.and]: [{ status: "pending" }, { type: "sell" }],
+    },
+  })
     .then((orders) => {
       res.send(orders);
     })
@@ -54,12 +66,57 @@ exports.getAllPendingOrders = (req, res) => {
     });
 };
 
-exports.confirmOrder = (req, res) => {
+exports.confirmOrder = async (req, res) => {
   const { orderId } = req.params;
   if (!orderId) {
     res.status(400).send({ message: "Order ID is required" });
     return;
   }
+  try {
+    const order = await Orders.findByPk(orderId);
+    if (!order) {
+      res.status(404).send({ message: "Order not found" });
+      return;
+    }
+    order.status = "approved";
+    order.save();
+    if (order.type !== "sell") {
+      res.send({ message: "Admin can only approve sell orders", data: order });
+      return;
+    }
+    const userPortfolio = await Portfolio.findOne({
+      where: {
+        userId: order.customerId,
+      },
+    });
+    if (!userPortfolio) {
+      res.status(404).send({ message: "User portfolio not found" });
+      return;
+    }
+    let products = JSON.parse(userPortfolio.products);
+    const productIndex = products.findIndex(
+      (product) => product.productId === order.productId
+    );
+    if (productIndex === -1) {
+      res.status(404).send({ message: "Product not found in user portfolio" });
+      return;
+    }
+    const product = products[productIndex];
+    if (product.quantity < order.quantity) {
+      res.status(400).send({ message: "Insufficient product quantity" });
+      return;
+    }
+    product.quantity -= order.quantity;
+    products[productIndex] = product;
+    userPortfolio.products = JSON.stringify(products);
+    userPortfolio.walletAmount += order.totalPrice;
+    userPortfolio.save();
+    res.send({ message: "Order has been approved!", data: order });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send({ message: error.message });
+  }
+
   Orders.update({ status: "approved" }, { where: { id: orderId } })
     .then((order) => {
       res.send({ message: "Order has been approved!", data: order });
