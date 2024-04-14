@@ -1,33 +1,46 @@
-const { portfolio: Portfolio, diamonds: Diamonds } = require("../models");
+const {
+  portfolio: Portfolio,
+  diamonds: Diamonds,
+  diamonds,
+} = require("../models");
 
-exports.getPortfolio = (req, res) => {
+exports.getPortfolio = async (req, res) => {
   const { userId } = req.params;
 
-  if (!userId) {
-    res.status(400).send({ message: "userId is required" });
-    return;
-  }
+  try {
+    if (!userId) {
+      res.status(400).send({ message: "userId is required" });
+      return;
+    }
 
-  Portfolio.findOne({
-    userId,
-  })
-    .then((portfolio) => {
-      Diamonds.findAll({
-        where: {
-          id: portfolio.productIds,
-        },
-      })
-        .then((diamonds) => {
-          portfolio.dataValues.diamonds = diamonds;
-          res.send(portfolio);
-        })
-        .catch((err) => {
-          res.status(500).send({ message: err.message });
-        });
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err.message });
+    const portfolio = await Portfolio.findOne({
+      where: {
+        userId,
+      },
     });
+
+    if (!portfolio) {
+      res.status(404).send({ message: "portfolio not found" });
+      return;
+    }
+
+    const products = await JSON.parse(portfolio.products);
+    const productIds = products.map((product) => product.productId);
+    if (!productIds.length) {
+      res.send({ ...portfolio.dataValues, diamonds: [] });
+      return;
+    }
+    const diamonds = await Diamonds.findAll({
+      where: {
+        id: productIds,
+      },
+    });
+
+    res.send({ ...portfolio.dataValues, diamonds });
+  } catch (error) {
+    console.error("error in finding", error);
+    res.status(500).send({ message: error.message });
+  }
 };
 
 exports.addMoney = (req, res) => {

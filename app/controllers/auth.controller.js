@@ -16,22 +16,23 @@ exports.signup = (req, res) => {
     .then(async (user) => {
       Portfolio.create({
         userId: user.id,
-        walletAmount,
-        productIds: JSON.stringify([]),
+        walletAmount: 0,
+        products: "[]",
       })
         .then((portfolio) => {
           console.log("portfolio created");
           res.status(201).send({
             message: "User registered successfully!",
-            data: { ...user, portfolio },
+            data: { ...user.dataValues, portfolio },
           });
         })
         .catch((err) => {
-          console.log("error", err);
+          console.log("error is creating portfolio", err);
           res.status(500).send({ message: err.message });
         });
     })
     .catch((err) => {
+      console.log("error is creating user", err);
       res.status(500).send({ message: err.message });
     });
 };

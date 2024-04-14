@@ -26,6 +26,7 @@ exports.createDiamond = (req, res) => {
   Diamonds.create({
     name,
     price,
+    oldPrice: price,
     category,
     subcategory,
   })

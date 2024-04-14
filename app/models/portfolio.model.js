@@ -9,16 +9,12 @@ module.exports = (sequelize, Sequelize) => {
       walletAmount: {
         type: Sequelize.FLOAT,
         allowNull: false,
+        default: 0.0,
       },
-      productIds: {
+      products: {
         type: Sequelize.STRING,
         allowNull: false,
-        get: function () {
-          return JSON.parse(this.getDataValue("productIds"));
-        },
-        set: function (val) {
-          return this.setDataValue("productIds", JSON.stringify(val));
-        },
+        default: "[]",
       },
     },
     {

@@ -15,6 +15,9 @@ module.exports = (sequelize, Sequelize) => {
     subcategory: {
       type: Sequelize.STRING,
     },
+    imageUrl: {
+      type: Sequelize.STRING,
+    },
   });
   return Diamonds;
 };
