@@ -47,20 +47,7 @@ exports.addMoney = (req, res) => {
   })
     .then((portfolio) => {
       if (!portfolio) {
-        console.log("portfolio not found");
-        Portfolio.create({
-          userId,
-          walletAmount,
-          productIds: JSON.stringify([]),
-        })
-          .then((portfolio) => {
-            console.log("portfolio created");
-            res.send(portfolio);
-          })
-          .catch((err) => {
-            console.log("error", err);
-            res.status(500).send({ message: err.message });
-          });
+        res.status(404).send({ message: "portfolio not found" });
         return;
       }
 

@@ -1,4 +1,4 @@
-const { orders: Orders } = require("../models");
+const { orders: Orders, portfolio: Portfolio } = require("../models");
 
 exports.postOrder = (req, res) => {
   const { userId, productId, quantity, type, totalPrice } = req.body;
@@ -14,7 +14,25 @@ exports.postOrder = (req, res) => {
     type,
     totalPrice,
   })
-    .then((order) => {
+    .then(async (order) => {
+      if (order.type === "buy") {
+        const userPortfolio = await Portfolio.findOne({
+          where: {
+            userId: order.customerId,
+          },
+        });
+        let productIds = JSON.parse(userPortfolio.productIds);
+        productIds = [
+          ...productIds,
+          {
+            productId: order.productId,
+            quantity: order.quantity,
+            buyPrice: order.totalPrice,
+          },
+        ];
+        userPortfolio.productIds = JSON.stringify(productIds);
+        userPortfolio.save();
+      }
       res.send(order);
     })
     .catch((err) => {
@@ -38,7 +56,7 @@ exports.confirmOrder = (req, res) => {
     res.status(400).send({ message: "Order ID is required" });
     return;
   }
-  Orders.findAll({ status: "approved" }, { where: { id: orderId } })
+  Orders.update({ status: "approved" }, { where: { id: orderId } })
     .then((order) => {
       res.send(order);
     })
@@ -53,7 +71,7 @@ exports.rejectOrder = (req, res) => {
     res.status(400).send({ message: "Order ID is required" });
     return;
   }
-  Orders.findAll({ status: "rejected" }, { where: { id: orderId } })
+  Orders.update({ status: "rejected" }, { where: { id: orderId } })
     .then((order) => {
       res.send(order);
     })

@@ -62,26 +62,32 @@ exports.deleteDiamond = (req, res) => {
     });
 };
 
-exports.editDiamond = (req, res) => {
+exports.editDiamond = async (req, res) => {
   const { diamondId } = req.params;
   const { name, price, category, subcategory } = req.body;
   if (!diamondId || !name || !price || !category || !subcategory) {
     res.status(400).send({ message: "data is missing" });
     return;
   }
-  Diamonds.update(
-    {
+  const diamond = await Diamonds.findOne({
+    where: {
+      id: diamondId,
+    },
+  });
+
+  if (!diamond) {
+    res.status(404).send({ message: "Diamond not found" });
+    return;
+  }
+
+  diamond
+    .update({
       name,
       price,
+      oldPrice: diamond.price,
       category,
       subcategory,
-    },
-    {
-      where: {
-        id: diamondId,
-      },
-    }
-  )
+    })
     .then(() => {
       res.status(200).send({
         message: "Diamond updated successfully!",

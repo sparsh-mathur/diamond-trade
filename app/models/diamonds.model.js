@@ -6,6 +6,9 @@ module.exports = (sequelize, Sequelize) => {
     price: {
       type: Sequelize.INTEGER,
     },
+    oldPrice: {
+      type: Sequelize.INTEGER,
+    },
     category: {
       type: Sequelize.STRING,
     },

@@ -1,6 +1,7 @@
 const db = require("../models");
 const config = require("../config/auth.config");
 const User = db.user;
+const Portfolio = db.portfolio;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
@@ -12,8 +13,23 @@ exports.signup = (req, res) => {
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8),
   })
-    .then((user) => {
-      res.status(201).send({ message: "User registered successfully!" });
+    .then(async (user) => {
+      Portfolio.create({
+        userId: user.id,
+        walletAmount,
+        productIds: JSON.stringify([]),
+      })
+        .then((portfolio) => {
+          console.log("portfolio created");
+          res.status(201).send({
+            message: "User registered successfully!",
+            data: { ...user, portfolio },
+          });
+        })
+        .catch((err) => {
+          console.log("error", err);
+          res.status(500).send({ message: err.message });
+        });
     })
     .catch((err) => {
       res.status(500).send({ message: err.message });
