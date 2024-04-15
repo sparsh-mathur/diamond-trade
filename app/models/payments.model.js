@@ -13,9 +13,10 @@ module.exports = (sequelize, Sequelize) => {
       utf: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true,
       },
       userId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         allowNull: false,
       },
       status: {

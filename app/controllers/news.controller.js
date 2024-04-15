@@ -25,7 +25,7 @@ exports.createNews = (req, res) => {
     content,
     author: req.userId || "admin",
     publishedAt: new Date(),
-    imageUrl: req.file.location,
+    imageUrl: req.file ? req.file.location : null,
   })
     .then((news) => {
       res

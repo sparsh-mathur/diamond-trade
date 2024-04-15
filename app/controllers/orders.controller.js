@@ -66,6 +66,25 @@ exports.getAllPendingOrders = (req, res) => {
     });
 };
 
+exports.getAllUserOrders = (req, res) => {
+  const { userId } = req.params;
+  if (!userId) {
+    res.status(400).send({ message: "User ID is required" });
+    return;
+  }
+  Orders.findAll({
+    where: {
+      customerId: userId,
+    },
+  })
+    .then((orders) => {
+      res.send(orders);
+    })
+    .catch((err) => {
+      res.status(500).send({ message: err.message });
+    });
+};
+
 exports.confirmOrder = async (req, res) => {
   const { orderId } = req.params;
   if (!orderId) {

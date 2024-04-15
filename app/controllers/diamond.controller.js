@@ -22,6 +22,7 @@ exports.createDiamond = (req, res) => {
     res.status(400).send({ message: "data is missing" });
     return;
   }
+
   // Save Diamond to Database
   Diamonds.create({
     name,
@@ -29,6 +30,7 @@ exports.createDiamond = (req, res) => {
     oldPrice: price,
     category,
     subcategory,
+    imageUrl: req.file ? req.file.location : null,
   })
     .then((diamond) => {
       res.status(201).send({

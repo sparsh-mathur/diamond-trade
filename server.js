@@ -20,10 +20,6 @@ const db = require("./app/models");
 
 // db.sequelize.sync({ alter: true });
 //force: true will drop the table if it already exists
-// db.sequelize.sync({ force: true }).then(() => {
-//   console.log("Drop and Resync Database with { force: true }");
-//   initial();
-// });
 
 // simple route
 app.get("/health", (req, res) => {
@@ -47,6 +43,7 @@ require("./app/routes/referrals.routes")(app);
 require("./app/routes/orders.routes")(app);
 require("./app/routes/portfolio.routes")(app);
 require("./app/routes/bankDetails.routes")(app);
+require("./app/routes/payments.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.SERVER_PORT || 8080;
