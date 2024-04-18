@@ -10,4 +10,5 @@ module.exports = function (app) {
   );
   app.delete("/api/diamond/:diamondId", controller.deleteDiamond);
   app.put("/api/diamond/:diamondId", controller.editDiamond);
+  app.get("/api/diamond/trends", controller.getTrendingDiamonds);
 };

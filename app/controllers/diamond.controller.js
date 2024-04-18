@@ -1,3 +1,4 @@
+const { Op, Sequelize } = require("sequelize");
 const db = require("../models");
 const Diamonds = db.diamonds;
 
@@ -99,4 +100,37 @@ exports.editDiamond = async (req, res) => {
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
+};
+
+exports.getTrendingDiamonds = async (_, res) => {
+  try {
+    const upTrendDiamonds = await Diamonds.findAll({
+      where: {
+        price: {
+          [Op.gt]: Sequelize.col("oldPrice"),
+        },
+      },
+      order: [[Sequelize.literal(`(price  - "oldPrice")`), "DESC"]],
+    });
+
+    const downTrendDiamonds = await Diamonds.findAll({
+      where: {
+        [Op.or]: {
+          price: {
+            [Op.lt]: Sequelize.col("oldPrice"),
+          },
+          oldPrice: {
+            [Op.eq]: null,
+          },
+        },
+      },
+      order: [[Sequelize.literal(`("oldPrice"  - price)`), "DESC"]],
+    });
+    res.send({
+      upTrendDiamonds,
+      downTrendDiamonds,
+    });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
 };

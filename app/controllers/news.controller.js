@@ -1,5 +1,6 @@
 const db = require("../models");
 const News = db.news;
+const Media = db.medias;
 
 exports.getAllNews = (req, res) => {
   News.findAll({
@@ -13,29 +14,28 @@ exports.getAllNews = (req, res) => {
     });
 };
 
-exports.createNews = (req, res) => {
+exports.createNews = async (req, res) => {
   const { title, content } = req.body;
   if (!title || !content) {
-    res.status(400).send({ message: "Title and content are required!" });
+    res.status(400).send({ message: "Title ,content are required!" });
     return;
   }
-
-  News.create({
-    title,
-    content,
-    author: req.userId || "admin",
-    publishedAt: new Date(),
-    imageUrl: req.file ? req.file.location : null,
-  })
-    .then((news) => {
-      res
-        .status(201)
-        .send({ message: "news created successfully", data: news });
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err.message });
+  try {
+    const createdNews = await News.create({
+      title,
+      content,
+      author_id: req.userId,
+      image_id: req.media_id,
     });
+
+    res
+      .status(201)
+      .send({ message: "news created successfully", data: createdNews });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
 };
+
 exports.editNews = (req, res) => {
   const { title, content } = req.body;
   const { newsId } = req.params;

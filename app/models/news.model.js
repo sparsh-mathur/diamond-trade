@@ -1,26 +1,36 @@
-module.exports = (sequelize, Sequelize) => {
+const { DataTypes } = require("sequelize");
+
+module.exports = (sequelize) => {
   const News = sequelize.define(
     "news",
     {
+      id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+        defaultValue: DataTypes.UUIDV4,
+      },
       title: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
       },
       content: {
-        type: Sequelize.TEXT,
+        type: DataTypes.TEXT,
         allowNull: false,
       },
-      author: {
-        type: Sequelize.STRING,
+      author_id: {
+        type: DataTypes.UUID,
+        references: {
+          model: "users",
+          key: "id",
+        },
         allowNull: false,
       },
-      publishedAt: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
-      imageUrl: {
-        type: Sequelize.STRING,
-        allowNull: true,
+      image_id: {
+        type: DataTypes.UUID,
+        references: {
+          model: "media",
+          key: "id",
+        },
       },
     },
     {

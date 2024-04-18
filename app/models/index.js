@@ -27,6 +27,7 @@ db.referrals = require("../models/referrals.model.js")(sequelize, Sequelize);
 db.portfolio = require("../models/portfolio.model.js")(sequelize, Sequelize);
 db.bankDetails = require("../models/bankDetails.js")(sequelize, Sequelize);
 db.payments = require("../models/payments.model.js")(sequelize, Sequelize);
+db.medias = require("../models/media.model.js")(sequelize, Sequelize);
 
 db.ROLES = ["user", "admin", "moderator"];
 
