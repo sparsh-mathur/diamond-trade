@@ -15,8 +15,12 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: false,
         unique: true,
       },
-      userId: {
-        type: Sequelize.STRING,
+      user_id: {
+        type: Sequelize.UUID,
+        references: {
+          model: "users",
+          key: "id",
+        },
         allowNull: false,
       },
       status: {

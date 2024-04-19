@@ -78,18 +78,15 @@ exports.updatePayment = async (req, res) => {
       return;
     }
     payment.status = "approved";
-    payment.save();
-    const portfolio = await db.portfolio.findOne({
-      where: {
-        userId: payment.userId,
-      },
-    });
+    const user = await db.user.findByPk(payment.user_id);
+    const portfolio = await db.portfolio.findByPk(user.portfolio_id);
     if (!portfolio) {
       res.status(404).send({ message: "Portfolio not found" });
       return;
     }
     portfolio.walletAmount += payment.amount;
-    portfolio.save();
+    await payment.save();
+    await portfolio.save();
     res.send({ message: "Payment updated successfully" });
   } catch (error) {
     res.status(500).send({ message: error.message });
