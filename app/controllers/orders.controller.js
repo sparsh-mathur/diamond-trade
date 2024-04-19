@@ -1,5 +1,9 @@
 const { Op } = require("sequelize");
-const { orders: Orders, portfolio: Portfolio } = require("../models");
+const {
+  orders: Orders,
+  portfolio: Portfolio,
+  user: User,
+} = require("../models");
 
 exports.postOrder = async (req, res) => {
   const { userId, productId, quantity, type, totalPrice } = req.body;
@@ -18,11 +22,16 @@ exports.postOrder = async (req, res) => {
     });
 
     if (order.type === "buy") {
-      const userPortfolio = await Portfolio.findOne({
-        where: {
-          userId: order.customerId,
-        },
-      });
+      const user = await User.findByPk(userId);
+      if (!user) {
+        res.status(404).send({ message: "User not found" });
+        return;
+      }
+      const userPortfolio = await Portfolio.findByPk(user.portfolio_id);
+      if (!userPortfolio) {
+        res.status(404).send({ message: "User portfolio not found" });
+        return;
+      }
 
       if (userPortfolio.walletAmount < order.totalPrice) {
         res.status(400).send({ message: "Insufficient funds" });
