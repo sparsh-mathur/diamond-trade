@@ -4,7 +4,7 @@ const Media = db.medias;
 
 exports.getAllNews = (req, res) => {
   News.findAll({
-    order: [["publishedAt", "DESC"]],
+    order: [["createdAt", "DESC"]],
   })
     .then((news) => {
       res.send(news);
@@ -49,7 +49,6 @@ exports.editNews = (req, res) => {
       title,
       content,
       author: req.userId || "admin",
-      publishedAt: new Date(),
     },
     {
       where: {

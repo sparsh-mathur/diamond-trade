@@ -19,16 +19,14 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
+db.portfolio = require("../models/portfolio.model.js")(sequelize, Sequelize);
 db.user = require("../models/user.model.js")(sequelize, Sequelize);
 db.diamonds = require("../models/diamonds.model.js")(sequelize, Sequelize);
+db.medias = require("../models/media.model.js")(sequelize, Sequelize);
 db.orders = require("../models/orders.model.js")(sequelize, Sequelize);
 db.news = require("../models/news.model.js")(sequelize, Sequelize);
 db.referrals = require("../models/referrals.model.js")(sequelize, Sequelize);
-db.portfolio = require("../models/portfolio.model.js")(sequelize, Sequelize);
 db.bankDetails = require("../models/bankDetails.js")(sequelize, Sequelize);
 db.payments = require("../models/payments.model.js")(sequelize, Sequelize);
-db.medias = require("../models/media.model.js")(sequelize, Sequelize);
-
-db.ROLES = ["user", "admin", "moderator"];
 
 module.exports = db;

@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 // database
 const db = require("./app/models");
 
-// db.sequelize.sync({ alter: true });
+// db.sequelize.sync({ force: true });
 //force: true will drop the table if it already exists
 
 // simple route

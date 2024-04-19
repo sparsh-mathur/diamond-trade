@@ -7,8 +7,8 @@ module.exports = function (app) {
   app.get("/api/news", controller.getAllNews);
   app.post(
     "/api/news",
-    [authJwt.impersonateAdmin],
-    [uploadImage.single("image"), MediaController.saveMedia],
+    // [authJwt.impersonateAdmin],
+    // [uploadImage.single("image"), MediaController.saveMedia],
     controller.createNews
   );
   app.put("/api/news/:newsId", controller.editNews);

@@ -1,6 +1,7 @@
-const { DataTypes } = require("sequelize");
+const { DataTypes, models } = require("sequelize");
+const { portfolio } = require(".");
 
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize) => {
   const User = sequelize.define("users", {
     id: {
       type: DataTypes.UUID,
@@ -23,6 +24,14 @@ module.exports = (sequelize, Sequelize) => {
       type: DataTypes.STRING,
       defaultValue: "user",
       allowNull: false,
+    },
+    portfolio_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: {
+        model: "portfolio",
+        key: "id",
+      },
     },
     referralCode: {
       type: DataTypes.STRING,

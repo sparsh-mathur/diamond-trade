@@ -1,7 +1,8 @@
+const { where } = require("sequelize");
 const {
   portfolio: Portfolio,
   diamonds: Diamonds,
-  diamonds,
+  user: User,
 } = require("../models");
 
 exports.getPortfolio = async (req, res) => {
@@ -13,11 +14,9 @@ exports.getPortfolio = async (req, res) => {
       return;
     }
 
-    const portfolio = await Portfolio.findOne({
-      where: {
-        userId,
-      },
-    });
+    const user = await User.findByPk(userId);
+
+    const portfolio = await Portfolio.findByPk(user.portfolio_id);
 
     if (!portfolio) {
       res.status(404).send({ message: "portfolio not found" });

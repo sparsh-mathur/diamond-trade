@@ -6,35 +6,35 @@ const Portfolio = db.portfolio;
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
-exports.signup = (req, res) => {
-  // Save User to Database
-  User.create({
-    username: req.body.username,
-    email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 8),
-  })
-    .then(async (user) => {
-      Portfolio.create({
-        userId: user.id,
-        walletAmount: 0,
-        products: "[]",
-      })
-        .then((portfolio) => {
-          console.log("portfolio created");
-          res.status(201).send({
-            message: "User registered successfully!",
-            data: { ...user.dataValues, portfolio },
-          });
-        })
-        .catch((err) => {
-          console.log("error is creating portfolio", err);
-          res.status(500).send({ message: err.message });
-        });
-    })
-    .catch((err) => {
-      console.log("error is creating user", err);
-      res.status(500).send({ message: err.message });
+exports.signup = async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+
+    if (!username || !email || !password) {
+      return res.status(400).send({ message: "All fields are required" });
+    }
+
+    const user = await User.create({
+      username,
+      email,
+      password: bcrypt.hashSync(password, 8),
     });
+    if (!user) {
+      return res.status(500).send({ message: "User creation failed" });
+    }
+    const portfolio = await Portfolio.create({
+      walletAmount: 0,
+      products: "[]",
+    });
+    if (!portfolio) {
+      return res.status(500).send({ message: "Portfolio creation failed" });
+    }
+    user.portfolio_id = portfolio.id;
+    await user.save();
+    res.status(200).send({ message: "User created successfully" });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
 };
 
 exports.signin = (req, res) => {
@@ -42,11 +42,16 @@ exports.signin = (req, res) => {
   if (!email || !password) {
     return res.status(400).send({ message: "Email or Password is missing" });
   }
-  User.findOne({
-    where: {
-      email,
+  User.findOne(
+    {
+      where: {
+        email,
+      },
     },
-  })
+    {
+      include: [Portfolio],
+    }
+  )
     .then((user) => {
       if (!user) {
         return res.status(404).send({ message: "User Not found." });
