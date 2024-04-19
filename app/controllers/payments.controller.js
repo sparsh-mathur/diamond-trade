@@ -12,7 +12,7 @@ exports.postPayment = (req, res) => {
     amount,
     paymentDate: new Date(),
     utf,
-    userId,
+    user_id: userId,
   })
     .then((payment) => {
       res
