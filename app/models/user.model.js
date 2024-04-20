@@ -1,5 +1,4 @@
-const { DataTypes, models } = require("sequelize");
-const { portfolio } = require(".");
+const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
   const User = sequelize.define("users", {
@@ -21,7 +20,7 @@ module.exports = (sequelize) => {
       allowNull: false,
     },
     role: {
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM("admin", "user"),
       defaultValue: "user",
       allowNull: false,
     },

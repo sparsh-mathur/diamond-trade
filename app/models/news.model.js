@@ -39,5 +39,18 @@ module.exports = (sequelize) => {
     }
   );
 
+  News.associate = (models) => {
+    News.belongsTo(models.User, {
+      foreignKey: "author_id",
+      as: "users",
+    });
+
+    News.belongsTo(models.Media, {
+      foreignKey: "image_id",
+      as: "media",
+    });
+  };
+
+  // News.sync({ force: true });
   return News;
 };

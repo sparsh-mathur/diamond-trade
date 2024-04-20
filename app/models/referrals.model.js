@@ -1,15 +1,14 @@
-module.exports = (sequelize, Sequelize) => {
+const { DataTypes } = require("sequelize");
+
+module.exports = (sequelize) => {
   const Referrals = sequelize.define("referrals", {
     id: {
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
     referralCode: {
-      type: Sequelize.STRING,
-    },
-    userId: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
   });
 

@@ -1,23 +1,44 @@
-module.exports = (sequelize, Sequelize) => {
+const { DataTypes } = require("sequelize");
+
+module.exports = (sequelize) => {
   const Diamonds = sequelize.define("diamonds", {
+    id: {
+      type: DataTypes.UUID,
+      primaryKey: true,
+      defaultValue: DataTypes.UUIDV4,
+    },
     name: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
     price: {
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
     },
-    oldPrice: {
-      type: Sequelize.INTEGER,
+    old_price: {
+      type: DataTypes.INTEGER,
     },
     category: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
     subcategory: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
     },
-    imageUrl: {
-      type: Sequelize.STRING,
+    image_id: {
+      type: DataTypes.UUID,
+      references: {
+        model: "media",
+        key: "id",
+      },
     },
   });
+
+  Diamonds.associate = (models) => {
+    Diamonds.hasOne(models.Media, {
+      foreignKey: "image_id",
+      as: "image",
+    });
+  };
+
+  // Diamonds.sync({ force: true });
+
   return Diamonds;
 };

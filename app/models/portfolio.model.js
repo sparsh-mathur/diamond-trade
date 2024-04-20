@@ -1,23 +1,18 @@
 const { DataTypes } = require("sequelize");
 
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize) => {
   const Portfolio = sequelize.define(
     "portfolio",
     {
       id: {
         type: DataTypes.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
       },
-      walletAmount: {
+      wallet_amount: {
         type: DataTypes.FLOAT,
         allowNull: false,
         default: 0.0,
-      },
-      products: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        default: "[]",
       },
     },
     {
@@ -25,5 +20,7 @@ module.exports = (sequelize, Sequelize) => {
       timestamps: true,
     }
   );
+
+  // Portfolio.sync({ force: true });
   return Portfolio;
 };

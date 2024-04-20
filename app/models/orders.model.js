@@ -1,29 +1,39 @@
-module.exports = (sequelize, Sequelize) => {
+const { DataTypes } = require("sequelize");
+
+module.exports = (sequelize) => {
   const Order = sequelize.define(
     "Order",
     {
-      customerId: {
-        type: Sequelize.STRING,
+      user_id: {
+        type: DataTypes.UUID,
         allowNull: false,
+        references: {
+          model: "users",
+          key: "id",
+        },
       },
-      productId: {
-        type: Sequelize.STRING,
+      product_id: {
+        type: DataTypes.UUID,
         allowNull: false,
+        references: {
+          model: "diamonds",
+          key: "id",
+        },
       },
       quantity: {
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       type: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
       },
-      totalPrice: {
-        type: Sequelize.FLOAT,
+      total_price: {
+        type: DataTypes.FLOAT,
         allowNull: false,
       },
       status: {
-        type: Sequelize.STRING,
+        type: DataTypes.ENUM("pending", "approved", "rejected"),
         allowNull: false,
         defaultValue: "pending",
       },
@@ -33,6 +43,20 @@ module.exports = (sequelize, Sequelize) => {
       timestamps: true,
     }
   );
+
+  Order.associate = (models) => {
+    Order.belongsTo(models.User, {
+      foreignKey: "user_id",
+      as: "users",
+    });
+
+    Order.belongsTo(models.Diamond, {
+      foreignKey: "product_id",
+      as: "diamonds",
+    });
+  };
+
+  // Order.sync({ force: true });
 
   return Order;
 };

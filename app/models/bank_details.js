@@ -4,32 +4,45 @@ module.exports = (sequelize, Sequelize) => {
   const BankDetails = sequelize.define(
     "bank_details",
     {
-      userId: {
-        type: DataTypes.INTEGER,
+      user_id: {
+        type: DataTypes.UUID,
         allowNull: false,
+        references: {
+          model: "users",
+          key: "id",
+        },
       },
-      accountNumber: {
+      account_number: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      branchName: {
+      branch_name: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      ifscCode: {
+      ifsc_code: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      accountHolderName: {
+      account_holder_name: {
         type: DataTypes.STRING,
         allowNull: false,
       },
     },
     {
-      tableName: "bank_details", // Specify the table name
-      timestamps: true, // Include createdAt and updatedAt columns
+      tableName: "bank_details",
+      timestamps: true,
     }
   );
+
+  BankDetails.associate = (models) => {
+    BankDetails.belongsTo(models.User, {
+      foreignKey: "user_id",
+      as: "users",
+    });
+  };
+
+  // BankDetails.sync({ force: true });
 
   return BankDetails;
 };

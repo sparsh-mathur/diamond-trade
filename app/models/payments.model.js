@@ -1,22 +1,20 @@
-module.exports = (sequelize, Sequelize) => {
+const { DataTypes } = require("sequelize");
+
+module.exports = (sequelize) => {
   const Payments = sequelize.define(
     "payments",
     {
       amount: {
-        type: Sequelize.FLOAT,
-        allowNull: false,
-      },
-      paymentDate: {
-        type: Sequelize.DATE,
+        type: DataTypes.FLOAT,
         allowNull: false,
       },
       utf: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
         unique: true,
       },
       user_id: {
-        type: Sequelize.UUID,
+        type: DataTypes.UUID,
         references: {
           model: "users",
           key: "id",
@@ -24,7 +22,7 @@ module.exports = (sequelize, Sequelize) => {
         allowNull: false,
       },
       status: {
-        type: Sequelize.STRING,
+        type: DataTypes.ENUM("pending", "approved", "rejected"),
         allowNull: false,
         defaultValue: "pending",
       },
@@ -34,6 +32,13 @@ module.exports = (sequelize, Sequelize) => {
       timestamps: true,
     }
   );
+  Payments.associate = (models) => {
+    Payments.belongsTo(models.user, {
+      foreignKey: "user_id",
+      as: "users",
+    });
+  };
+  // Payments.sync({ force: true });
 
   return Payments;
 };
