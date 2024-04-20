@@ -3,6 +3,8 @@ const {
   orders: Orders,
   portfolio: Portfolio,
   user: User,
+  portfolio_products,
+  portfolio,
 } = require("../models");
 
 exports.postOrder = async (req, res) => {
@@ -37,18 +39,34 @@ exports.postOrder = async (req, res) => {
         res.status(400).send({ message: "Insufficient funds" });
         return;
       }
+      const productInPortfolio = await portfolio_products.findOne({
+        where: {
+          portfolio_id: userPortfolio.id,
+          product_id,
+        },
+      });
+      if (!productInPortfolio) {
+        await portfolio_products.create({
+          portfolio_id: userPortfolio.id,
+          product_id,
+          quantity,
+          buy_price: total_price,
+        });
+      } else {
+        productInPortfolio.quantity += quantity;
+        productInPortfolio.buy_price += total_price;
+        await productInPortfolio.save();
+      }
 
       userPortfolio.wallet_amount -= order.total_price;
       await userPortfolio.save();
       res.send({
-        message: "order has been created, and your portfolio updated",
-        data: order,
+        message: "order successfully completed, and your portfolio updated",
       });
       return;
     }
     res.send({
       message: "order has been created, will be approved by admin",
-      data: order,
     });
   } catch (error) {
     console.error(error.message);
@@ -103,51 +121,41 @@ exports.confirmOrder = async (req, res) => {
       return;
     }
     order.status = "approved";
-    order.save();
     if (order.type !== "sell") {
       res.send({ message: "Admin can only approve sell orders", data: order });
       return;
     }
-    const userPortfolio = await Portfolio.findOne({
-      where: {
-        userId: order.customerId,
-      },
-    });
+    const user = await User.findByPk(order.user_id);
+    const userPortfolio = await Portfolio.findByPk(user.portfolio_id);
     if (!userPortfolio) {
       res.status(404).send({ message: "User portfolio not found" });
       return;
     }
-    let products = JSON.parse(userPortfolio.products);
-    const productIndex = products.findIndex(
-      (product) => product.productId === order.productId
-    );
-    if (productIndex === -1) {
+    const productInPortfolio = await portfolio_products.findOne({
+      where: {
+        portfolio_id: userPortfolio.id,
+        product_id: order.product_id,
+      },
+    });
+    if (!productInPortfolio) {
       res.status(404).send({ message: "Product not found in user portfolio" });
       return;
     }
-    const product = products[productIndex];
-    if (product.quantity < order.quantity) {
+    if (productInPortfolio.quantity < order.quantity) {
       res.status(400).send({ message: "Insufficient product quantity" });
       return;
     }
-    product.quantity -= order.quantity;
-    products[productIndex] = product;
-    userPortfolio.products = JSON.stringify(products);
-    userPortfolio.walletAmount += order.totalPrice;
-    userPortfolio.save();
-    res.send({ message: "Order has been approved!", data: order });
+    productInPortfolio.quantity -= order.quantity;
+    productInPortfolio.buy_price -= order.total_price;
+    userPortfolio.wallet_amount += order.total_price;
+    await order.save();
+    await userPortfolio.save();
+    await productInPortfolio.save();
+    res.send({ message: "Order has been approved!" });
   } catch (error) {
     console.error(error.message);
     res.status(500).send({ message: error.message });
   }
-
-  Orders.update({ status: "approved" }, { where: { id: orderId } })
-    .then((order) => {
-      res.send({ message: "Order has been approved!", data: order });
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err.message });
-    });
 };
 
 exports.rejectOrder = (req, res) => {
