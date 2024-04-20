@@ -1,4 +1,4 @@
-const { Op, Sequelize } = require("sequelize");
+const { Op, Sequelize, where } = require("sequelize");
 const db = require("../models");
 const Diamonds = db.diamonds;
 
@@ -84,14 +84,22 @@ exports.editDiamond = async (req, res) => {
     return;
   }
 
+  diamond.set({
+    name,
+    price,
+    old_price: diamond.price,
+    category,
+    subcategory,
+  });
+  if (diamond.price !== diamond.old_price) {
+    await db.product_price_change.create({
+      product_id: diamondId,
+      old_price: diamond.old_price,
+      new_price: diamond.price,
+    });
+  }
   diamond
-    .update({
-      name,
-      price,
-      oldPrice: diamond.price,
-      category,
-      subcategory,
-    })
+    .save()
     .then(() => {
       res.status(200).send({
         message: "Diamond updated successfully!",
@@ -130,6 +138,26 @@ exports.getTrendingDiamonds = async (_, res) => {
       upTrendDiamonds,
       downTrendDiamonds,
     });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+
+exports.getPriceHistory = async (req, res) => {
+  const { diamondId } = req.params;
+  if (!diamondId) {
+    res.status(400).send({ message: "diamondId is missing" });
+    return;
+  }
+  try {
+    const priceHistory = await db.product_price_change.findAll({
+      where: {
+        product_id: diamondId,
+      },
+      attributes: ["new_price", "createdAt"],
+      order: [["createdAt", "DESC"]],
+    });
+    res.send(priceHistory);
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
