@@ -84,7 +84,7 @@ exports.updatePayment = async (req, res) => {
       res.status(404).send({ message: "Portfolio not found" });
       return;
     }
-    portfolio.walletAmount += payment.amount;
+    portfolio.wallet_amount += payment.amount;
     await payment.save();
     await portfolio.save();
     res.send({ message: "Payment updated successfully" });
