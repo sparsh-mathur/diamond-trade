@@ -23,19 +23,7 @@ exports.getPortfolio = async (req, res) => {
       return;
     }
 
-    const products = await JSON.parse(portfolio.products);
-    const productIds = products.map((product) => product.productId);
-    if (!productIds.length) {
-      res.send({ ...portfolio.dataValues, diamonds: [] });
-      return;
-    }
-    const diamonds = await Diamonds.findAll({
-      where: {
-        id: productIds,
-      },
-    });
-
-    res.send({ ...portfolio.dataValues, diamonds });
+    res.send(portfolio);
   } catch (error) {
     console.error("error in finding", error);
     res.status(500).send({ message: error.message });
