@@ -16,10 +16,19 @@ module.exports = (sequelize) => {
     old_price: {
       type: DataTypes.INTEGER,
     },
-    category: {
+    carat: {
       type: DataTypes.STRING,
     },
-    subcategory: {
+    size: {
+      type: DataTypes.STRING,
+    },
+    shape: {
+      type: DataTypes.STRING,
+    },
+    color: {
+      type: DataTypes.STRING,
+    },
+    manufacturing: {
       type: DataTypes.STRING,
     },
     image_id: {

@@ -1,4 +1,3 @@
-const { where } = require("sequelize");
 const {
   portfolio: Portfolio,
   diamonds: Diamonds,

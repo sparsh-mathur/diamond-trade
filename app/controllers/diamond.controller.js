@@ -5,8 +5,8 @@ const Diamonds = db.diamonds;
 exports.getAllDiamonds = (req, res) => {
   Diamonds.findAll({
     order: [
-      ["category", "DESC"],
-      ["subcategory", "DESC"],
+      ["createdAt", "DESC"],
+      ["updatedAt", "DESC"],
     ],
   })
     .then((diamonds) => {
@@ -18,8 +18,16 @@ exports.getAllDiamonds = (req, res) => {
 };
 
 exports.createDiamond = (req, res) => {
-  const { name, price, category, subcategory } = req.body;
-  if (!name || !price || !category || !subcategory) {
+  const { name, price, carat, size, shape, color, manufacturing } = req.body;
+  if (
+    !name ||
+    !price ||
+    !carat ||
+    !size ||
+    !shape ||
+    !color ||
+    !manufacturing
+  ) {
     res.status(400).send({ message: "data is missing" });
     return;
   }
@@ -29,8 +37,11 @@ exports.createDiamond = (req, res) => {
     name,
     price,
     old_price: price,
-    category,
-    subcategory,
+    carat,
+    size,
+    shape,
+    color,
+    manufacturing,
     imageUrl: req.file ? req.file.location : null,
   })
     .then((diamond) => {
@@ -68,8 +79,16 @@ exports.deleteDiamond = (req, res) => {
 
 exports.editDiamond = async (req, res) => {
   const { diamondId } = req.params;
-  const { name, price, category, subcategory } = req.body;
-  if (!diamondId || !name || !price || !category || !subcategory) {
+  const { name, price, carat, size, shape, color, manufacturing } = req.body;
+  if (
+    !name ||
+    !price ||
+    !carat ||
+    !size ||
+    !shape ||
+    !color ||
+    !manufacturing
+  ) {
     res.status(400).send({ message: "data is missing" });
     return;
   }
@@ -88,8 +107,11 @@ exports.editDiamond = async (req, res) => {
     name,
     price,
     old_price: diamond.price,
-    category,
-    subcategory,
+    carat,
+    size,
+    shape,
+    color,
+    manufacturing,
   });
   if (diamond.price !== diamond.old_price) {
     await db.product_price_change.create({
