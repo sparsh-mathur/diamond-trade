@@ -21,11 +21,11 @@ db.sequelize = sequelize;
 
 db.portfolio = require("../models/portfolio.model.js")(sequelize);
 db.user = require("../models/user.model.js")(sequelize);
+db.medias = require("../models/media.model.js")(sequelize);
 db.diamonds = require("../models/diamonds.model.js")(sequelize);
 db.product_price_change = require("../models/product_price_change.model.js")(
   sequelize
 );
-db.medias = require("../models/media.model.js")(sequelize);
 db.orders = require("../models/orders.model.js")(sequelize);
 db.news = require("../models/news.model.js")(sequelize);
 db.bank_details = require("../models/bank_details.js")(sequelize);

@@ -12,7 +12,7 @@ module.exports = (sequelize) => {
       wallet_amount: {
         type: DataTypes.FLOAT,
         allowNull: false,
-        default: 0.0,
+        defaultValue: 0.0,
       },
     },
     {

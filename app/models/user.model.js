@@ -32,10 +32,12 @@ module.exports = (sequelize) => {
         key: "id",
       },
     },
-    referralCode: {
+    referral_code: {
       type: DataTypes.STRING,
     },
   });
+
+  // User.sync({ force: true });
 
   return User;
 };

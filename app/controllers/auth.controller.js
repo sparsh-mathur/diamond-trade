@@ -11,7 +11,9 @@ exports.signup = async (req, res) => {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
-      return res.status(400).send({ message: "All fields are required" });
+      return res
+        .status(400)
+        .send({ message: "username, email and password are required fields" });
     }
 
     const user = await User.create({
@@ -22,10 +24,7 @@ exports.signup = async (req, res) => {
     if (!user) {
       return res.status(500).send({ message: "User creation failed" });
     }
-    const portfolio = await Portfolio.create({
-      walletAmount: 0,
-      products: "[]",
-    });
+    const portfolio = await Portfolio.create();
     if (!portfolio) {
       return res.status(500).send({ message: "Portfolio creation failed" });
     }

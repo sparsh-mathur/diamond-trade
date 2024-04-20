@@ -25,5 +25,7 @@ module.exports = (sequelize) => {
       updatedAt: false,
     }
   );
+
+  // Media.sync({ force: true });
   return Media;
 };

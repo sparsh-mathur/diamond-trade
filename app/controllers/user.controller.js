@@ -1,18 +1,14 @@
 const Users = require("../models").user;
 
 exports.getAllUsers = (req, res) => {
-  Users.findAll(
-    {
-      where: {
-        role: "user",
-      },
+  Users.findAll({
+    where: {
+      role: "user",
     },
-    {
-      attributes: {
-        exclude: ["password"],
-      },
-    }
-  )
+    attributes: {
+      exclude: ["password"],
+    },
+  })
     .then((users) => {
       res.send(users);
     })
