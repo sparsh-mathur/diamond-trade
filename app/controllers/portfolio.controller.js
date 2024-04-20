@@ -2,6 +2,7 @@ const {
   portfolio: Portfolio,
   diamonds: Diamonds,
   user: User,
+  portfolio_products,
 } = require("../models");
 
 exports.getPortfolio = async (req, res) => {
@@ -16,13 +17,18 @@ exports.getPortfolio = async (req, res) => {
     const user = await User.findByPk(userId);
 
     const portfolio = await Portfolio.findByPk(user.portfolio_id);
+    const products = await portfolio_products.findAll({
+      where: {
+        portfolio_id: portfolio.id,
+      },
+    });
 
     if (!portfolio) {
       res.status(404).send({ message: "portfolio not found" });
       return;
     }
 
-    res.send(portfolio);
+    res.send({ ...portfolio.toJSON(), products });
   } catch (error) {
     console.error("error in finding", error);
     res.status(500).send({ message: error.message });
