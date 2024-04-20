@@ -28,7 +28,7 @@ exports.createDiamond = (req, res) => {
   Diamonds.create({
     name,
     price,
-    oldPrice: price,
+    old_price: price,
     category,
     subcategory,
     imageUrl: req.file ? req.file.location : null,
@@ -107,24 +107,24 @@ exports.getTrendingDiamonds = async (_, res) => {
     const upTrendDiamonds = await Diamonds.findAll({
       where: {
         price: {
-          [Op.gt]: Sequelize.col("oldPrice"),
+          [Op.gt]: Sequelize.col("old_price"),
         },
       },
-      order: [[Sequelize.literal(`(price  - "oldPrice")`), "DESC"]],
+      order: [[Sequelize.literal(`(price  - old_price)`), "DESC"]],
     });
 
     const downTrendDiamonds = await Diamonds.findAll({
       where: {
         [Op.or]: {
           price: {
-            [Op.lt]: Sequelize.col("oldPrice"),
+            [Op.lt]: Sequelize.col("old_price"),
           },
-          oldPrice: {
+          old_price: {
             [Op.eq]: null,
           },
         },
       },
-      order: [[Sequelize.literal(`("oldPrice"  - price)`), "DESC"]],
+      order: [[Sequelize.literal(`(old_price  - price)`), "DESC"]],
     });
     res.send({
       upTrendDiamonds,

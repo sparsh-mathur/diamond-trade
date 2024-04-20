@@ -46,7 +46,7 @@ exports.getUserPayments = (req, res) => {
   }
   Payments.findAll({
     where: {
-      userId,
+      user_id: userId,
     },
   })
     .then((payments) => {

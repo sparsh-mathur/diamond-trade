@@ -6,19 +6,19 @@ const {
 } = require("../models");
 
 exports.postOrder = async (req, res) => {
-  const { userId, productId, quantity, type, totalPrice } = req.body;
-  if (!userId || !productId || !quantity || !type || !totalPrice) {
+  const { userId, product_id, quantity, type, total_price } = req.body;
+  if (!userId || !product_id || !quantity || !type || !total_price) {
     res.status(400).send({ message: "All fields are required" });
     return;
   }
   try {
     const order = await Orders.create({
-      customerId: userId,
-      productId,
+      user_id: userId,
+      product_id,
       quantity,
       type,
       status: type === "buy" ? "approved" : "pending",
-      totalPrice,
+      total_price,
     });
 
     if (order.type === "buy") {
@@ -33,26 +33,21 @@ exports.postOrder = async (req, res) => {
         return;
       }
 
-      if (userPortfolio.walletAmount < order.totalPrice) {
+      if (userPortfolio.wallet_amount < order.total_price) {
         res.status(400).send({ message: "Insufficient funds" });
         return;
       }
 
-      let products = JSON.parse(userPortfolio.products);
-      products = [
-        ...products,
-        {
-          productId: order.productId,
-          quantity: order.quantity,
-          buyPrice: order.totalPrice,
-        },
-      ];
-      userPortfolio.products = JSON.stringify(products);
-      userPortfolio.walletAmount -= order.totalPrice;
-      userPortfolio.save();
+      userPortfolio.wallet_amount -= order.total_price;
+      await userPortfolio.save();
+      res.send({
+        message: "order has been created, and your portfolio updated",
+        data: order,
+      });
+      return;
     }
     res.send({
-      message: "order has been created, and your portfolio updated",
+      message: "order has been created, will be approved by admin",
       data: order,
     });
   } catch (error) {
@@ -83,8 +78,9 @@ exports.getAllUserOrders = (req, res) => {
   }
   Orders.findAll({
     where: {
-      customerId: userId,
+      user_id: userId,
     },
+    order: [["createdAt", "DESC"]],
   })
     .then((orders) => {
       res.send(orders);

@@ -15,7 +15,7 @@ exports.getAllNews = (req, res) => {
 };
 
 exports.createNews = async (req, res) => {
-  const { title, content } = req.body;
+  const { title, content, userId } = req.body;
   if (!title || !content) {
     res.status(400).send({ message: "Title ,content are required!" });
     return;
@@ -24,7 +24,7 @@ exports.createNews = async (req, res) => {
     const createdNews = await News.create({
       title,
       content,
-      author_id: req.userId,
+      author_id: userId,
       image_id: req.media_id,
     });
 
