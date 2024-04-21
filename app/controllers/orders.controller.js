@@ -4,7 +4,7 @@ const {
   portfolio: Portfolio,
   user: User,
   portfolio_products,
-  portfolio,
+  diamonds: Diamonds,
 } = require("../models");
 
 exports.postOrder = async (req, res) => {
@@ -98,6 +98,12 @@ exports.getAllUserOrders = (req, res) => {
     where: {
       user_id: userId,
     },
+    include: [
+      {
+        model: Diamonds,
+        // as: "products",
+      },
+    ],
     order: [["createdAt", "DESC"]],
   })
     .then((orders) => {

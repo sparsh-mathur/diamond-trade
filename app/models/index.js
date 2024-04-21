@@ -35,4 +35,22 @@ db.portfolio_products = require("../models/portfolio_products.model.js")(
 );
 db.referrals = require("../models/referrals.model.js")(sequelize);
 
+// associations
+db.user.hasOne(db.portfolio, {
+  foreignKey: "user_id",
+});
+db.portfolio.belongsTo(db.user, {
+  foreignKey: "user_id",
+  as: "user",
+});
+
+db.user.hasMany(db.orders, {
+  foreignKey: "user_id",
+});
+db.orders.belongsTo(db.user, {
+  foreignKey: "user_id",
+  as: "user",
+});
+
+//export
 module.exports = db;

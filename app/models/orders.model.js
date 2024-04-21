@@ -49,8 +49,7 @@ module.exports = (sequelize) => {
       foreignKey: "user_id",
       as: "users",
     });
-
-    Order.belongsTo(models.Diamond, {
+    Order.belongsTo(Diamond, {
       foreignKey: "product_id",
       as: "diamonds",
     });
