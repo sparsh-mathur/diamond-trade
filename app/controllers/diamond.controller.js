@@ -2,19 +2,35 @@ const { Op, Sequelize, where } = require("sequelize");
 const db = require("../models");
 const Diamonds = db.diamonds;
 
-exports.getAllDiamonds = (req, res) => {
-  Diamonds.findAll({
-    order: [
-      ["createdAt", "DESC"],
-      ["updatedAt", "DESC"],
-    ],
-  })
-    .then((diamonds) => {
-      res.send(diamonds);
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err.message });
+exports.getAllDiamonds = async (req, res) => {
+  try {
+    const diamonds = await Diamonds.findAll({
+      order: [
+        ["createdAt", "DESC"],
+        ["updatedAt", "DESC"],
+      ],
     });
+
+    const imageIds = diamonds.reduce((acc, curr) => {
+      if (curr.image_id) acc.push(curr.image_id);
+      return acc;
+    }, []);
+
+    const images = await db.medias.findAll({
+      where: {
+        id: imageIds,
+      },
+    });
+    const diamondsWithImages = diamonds.map((diamond) => {
+      const image = images.find((img) => img.id === diamond.image_id);
+      diamond.dataValues.image = image;
+      return diamond;
+    });
+
+    res.status(200).send(diamondsWithImages);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
 };
 
 exports.createDiamond = (req, res) => {
@@ -42,7 +58,7 @@ exports.createDiamond = (req, res) => {
     shape,
     color,
     manufacturing,
-    imageUrl: req.file ? req.file.location : null,
+    image_id: req.media_id,
   })
     .then((diamond) => {
       res.status(201).send({

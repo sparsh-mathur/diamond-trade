@@ -1,11 +1,12 @@
 const controller = require("../controllers/diamond.controller");
+const MediaController = require("../controllers/media.controller");
 const uploadImage = require("../middlewares/uploadImage.middleware");
 
 module.exports = function (app) {
   app.get("/api/diamonds", controller.getAllDiamonds);
   app.post(
     "/api/diamond",
-    uploadImage.single("image"),
+    [uploadImage.single("image"), MediaController.saveMedia],
     controller.createDiamond
   );
   app.delete("/api/diamond/:diamondId", controller.deleteDiamond);

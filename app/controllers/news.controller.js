@@ -2,16 +2,32 @@ const db = require("../models");
 const News = db.news;
 const Media = db.medias;
 
-exports.getAllNews = (req, res) => {
-  News.findAll({
-    order: [["createdAt", "DESC"]],
-  })
-    .then((news) => {
-      res.send(news);
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err.message });
+exports.getAllNews = async (req, res) => {
+  try {
+    const news = await News.findAll({
+      order: [["createdAt", "DESC"]],
     });
+
+    const imageIds = news.reduce((acc, curr) => {
+      if (curr.image_id) acc.push(curr.image_id);
+      return acc;
+    }, []);
+
+    const images = await Media.findAll({
+      where: {
+        id: imageIds,
+      },
+    });
+    news.forEach((news) => {
+      if (news.image_id) {
+        const image = images.find((image) => image.id === news.image_id);
+        news.dataValues.image = image.toJSON();
+      }
+    });
+    res.send(news);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
 };
 
 exports.createNews = async (req, res) => {
@@ -37,10 +53,10 @@ exports.createNews = async (req, res) => {
 };
 
 exports.editNews = (req, res) => {
-  const { title, content } = req.body;
+  const { title, content, userId } = req.body;
   const { newsId } = req.params;
-  if (!title || !content) {
-    res.status(400).send({ message: "Title and content are required!" });
+  if (!title || !content | !userId) {
+    res.status(400).send({ message: "Title,content and userId are required!" });
     return;
   }
 
@@ -48,7 +64,7 @@ exports.editNews = (req, res) => {
     {
       title,
       content,
-      author: req.userId || "admin",
+      author_id: userId,
     },
     {
       where: {
@@ -57,7 +73,9 @@ exports.editNews = (req, res) => {
     }
   )
     .then((news) => {
-      res.send({ message: "news updated successfully", data: news });
+      res
+        .status(200)
+        .send({ message: "news updated successfully", data: news });
     })
     .catch((err) => {
       res.status(500).send({ message: err.message });
