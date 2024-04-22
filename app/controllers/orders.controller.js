@@ -98,12 +98,6 @@ exports.getAllUserOrders = (req, res) => {
     where: {
       user_id: userId,
     },
-    include: [
-      {
-        model: Diamonds,
-        // as: "products",
-      },
-    ],
     order: [["createdAt", "DESC"]],
   })
     .then((orders) => {
