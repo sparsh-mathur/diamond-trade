@@ -36,7 +36,23 @@ exports.getPortfolio = async (req, res) => {
       },
     });
 
-    res.send({ ...portfolio.toJSON(), products });
+    const productIds = products.map((product) => product.product_id);
+    const productsInfo = await Diamonds.findAll({
+      where: {
+        id: productIds,
+      },
+    });
+    const productsWithInfo = products.map((product) => {
+      const productInfo = productsInfo.find(
+        (info) => info.id === product.product_id
+      );
+      return {
+        ...product.toJSON(),
+        diamond_info: productInfo.toJSON(),
+      };
+    });
+
+    res.send({ ...portfolio.toJSON(), products: productsWithInfo });
   } catch (error) {
     console.error("error in finding", error);
     res.status(500).send({ message: error.message });
