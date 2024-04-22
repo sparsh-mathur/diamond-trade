@@ -14,7 +14,7 @@ module.exports = (sequelize) => {
         allowNull: false,
       },
       type: {
-        type: DataTypes.ENUM("image", "video"),
+        type: DataTypes.ENUM("image", "video", "payment", "carousel"),
         allowNull: false,
         defaultValue: "image",
       },
@@ -26,6 +26,6 @@ module.exports = (sequelize) => {
     }
   );
 
-  // Media.sync({ force: true });
+  // Media.sync({ alter: true });
   return Media;
 };
