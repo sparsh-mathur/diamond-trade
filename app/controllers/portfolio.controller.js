@@ -15,18 +15,26 @@ exports.getPortfolio = async (req, res) => {
     }
 
     const user = await User.findByPk(userId);
-
-    const portfolio = await Portfolio.findByPk(user.portfolio_id);
+    if (!user) {
+      res.status(404).send({ message: "User not found" });
+      return;
+    }
+    if (!user.portfolio_id) {
+      res.status(404).send({ message: "portfolio not attached to user" });
+      return;
+    }
+    const portfolio = await Portfolio.findByPk(user.portfolio_id, {
+      attributes: ["id", "wallet_amount"],
+    });
+    if (!portfolio) {
+      res.status(404).send({ message: "portfolio not found" });
+      return;
+    }
     const products = await portfolio_products.findAll({
       where: {
         portfolio_id: portfolio.id,
       },
     });
-
-    if (!portfolio) {
-      res.status(404).send({ message: "portfolio not found" });
-      return;
-    }
 
     res.send({ ...portfolio.toJSON(), products });
   } catch (error) {
