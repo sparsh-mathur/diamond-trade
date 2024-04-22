@@ -25,7 +25,12 @@ exports.signup = async (req, res) => {
     if (!user) {
       return res.status(500).send({ message: "User creation failed" });
     }
-    const portfolio = await Portfolio.create();
+    const portfolio = await Portfolio.create(
+      {},
+      {
+        returning: false,
+      }
+    );
     if (!portfolio) {
       return res.status(500).send({ message: "Portfolio creation failed" });
     }

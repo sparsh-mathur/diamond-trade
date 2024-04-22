@@ -21,6 +21,6 @@ module.exports = (sequelize) => {
     }
   );
 
-  // Portfolio.sync({ force: true });
+  // Portfolio.sync({ alter: true });
   return Portfolio;
 };
