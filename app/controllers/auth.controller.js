@@ -37,53 +37,44 @@ exports.signup = async (req, res) => {
   }
 };
 
-exports.signin = (req, res) => {
+exports.signin = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).send({ message: "Email or Password is missing" });
   }
-  User.findOne(
-    {
+  try {
+    const user = await User.findOne({
       where: {
         email,
       },
-    },
-    {
-      include: [Portfolio],
-    }
-  )
-    .then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: "User Not found." });
-      }
-
-      var passwordIsValid = bcrypt.compareSync(password, user.password);
-
-      if (!passwordIsValid) {
-        return res.status(401).send({
-          accessToken: null,
-          message: "Invalid Password!",
-        });
-      }
-
-      const token = jwt.sign({ id: user.id }, config.secret, {
-        algorithm: "HS256",
-        allowInsecureKeySizes: true,
-        expiresIn: 86400, // 24 hours
-      });
-
-      res.status(200).send({
-        message: "User logged in successfully",
-        data: {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          role: user.role,
-          accessToken: token,
-        },
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err.message });
     });
+    if (!user) {
+      return res.status(404).send({ message: "User Not found." });
+    }
+    const passwordIsValid = bcrypt.compareSync(password, user.password);
+    if (!passwordIsValid) {
+      return res.status(401).send({
+        accessToken: null,
+        message: "Invalid Password!",
+      });
+    }
+    const token = jwt.sign({ id: user.id }, config.secret, {
+      algorithm: "HS256",
+      allowInsecureKeySizes: true,
+      expiresIn: 86400, // 24 hours
+    });
+
+    res.status(200).send({
+      message: "User logged in successfully",
+      data: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        accessToken: token,
+      },
+    });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
 };
