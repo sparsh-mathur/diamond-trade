@@ -79,7 +79,9 @@ exports.updatePayment = async (req, res) => {
     }
     payment.status = "approved";
     const user = await db.user.findByPk(payment.user_id);
-    const portfolio = await db.portfolio.findByPk(user.portfolio_id);
+    const portfolio = await db.portfolio.findByPk(user.portfolio_id, {
+      attributes: ["id", "wallet_amount"],
+    });
     if (!portfolio) {
       res.status(404).send({ message: "Portfolio not found" });
       return;

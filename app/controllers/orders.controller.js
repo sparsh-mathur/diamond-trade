@@ -29,7 +29,9 @@ exports.postOrder = async (req, res) => {
         res.status(404).send({ message: "User not found" });
         return;
       }
-      const userPortfolio = await Portfolio.findByPk(user.portfolio_id);
+      const userPortfolio = await Portfolio.findByPk(user.portfolio_id, {
+        attributes: ["id", "wallet_amount"],
+      });
       if (!userPortfolio) {
         res.status(404).send({ message: "User portfolio not found" });
         return;
@@ -126,7 +128,9 @@ exports.confirmOrder = async (req, res) => {
       return;
     }
     const user = await User.findByPk(order.user_id);
-    const userPortfolio = await Portfolio.findByPk(user.portfolio_id);
+    const userPortfolio = await Portfolio.findByPk(user.portfolio_id, {
+      attributes: ["id", "wallet_amount"],
+    });
     if (!userPortfolio) {
       res.status(404).send({ message: "User portfolio not found" });
       return;
