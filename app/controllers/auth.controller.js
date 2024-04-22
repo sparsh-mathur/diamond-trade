@@ -20,6 +20,7 @@ exports.signup = async (req, res) => {
       username,
       email,
       password: bcrypt.hashSync(password, 8),
+      image_id: req.media_id,
     });
     if (!user) {
       return res.status(500).send({ message: "User creation failed" });

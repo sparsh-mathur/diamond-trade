@@ -1,4 +1,5 @@
 const Users = require("../models").user;
+const Media = require("../models").medias;
 
 exports.getAllUsers = (req, res) => {
   Users.findAll({
@@ -15,6 +16,29 @@ exports.getAllUsers = (req, res) => {
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
+};
+
+exports.getUserInfo = async (req, res) => {
+  const { userId } = req.params;
+  if (!userId) {
+    res.status(400).send({ message: "User ID is required!" });
+    return;
+  }
+  try {
+    const user = await Users.findByPk(userId, {
+      attributes: {
+        exclude: ["password"],
+      },
+    });
+    if (!user) {
+      res.status(404).send({ message: `User with ID ${userId} not found` });
+    }
+    const profile_image = await Media.findByPk(user.image_id);
+    user.setDataValue("profile_image", profile_image);
+    res.send(user);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
 };
 
 exports.deleteUser = (req, res) => {

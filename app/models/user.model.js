@@ -32,12 +32,20 @@ module.exports = (sequelize) => {
         key: "id",
       },
     },
+    image_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: {
+        model: "media",
+        key: "id",
+      },
+    },
     referral_code: {
       type: DataTypes.STRING,
     },
   });
 
-  // User.sync({ force: true });
+  // User.sync({ alter: true });
 
   return User;
 };
