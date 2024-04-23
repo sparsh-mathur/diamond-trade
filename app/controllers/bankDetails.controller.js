@@ -1,31 +1,25 @@
-const BankDetails = require("../models").bankDetails;
+const BankDetails = require("../models").bank_details;
 
 exports.addBankDetails = (req, res) => {
   const { userId } = req.params;
-  const { accountNumber, branchName, ifscCode, accountHolderName } = req.body;
+  const { account_number, branch_name, ifsc_code, account_holder_name } =
+    req.body;
   if (
-    !accountNumber ||
-    !branchName ||
-    !ifscCode ||
-    !accountHolderName ||
+    !account_number ||
+    !branch_name ||
+    !ifsc_code ||
+    !account_holder_name ||
     !userId
   ) {
-    console.log("accountDetailsInfo", {
-      accountNumber,
-      branchName,
-      ifscCode,
-      accountHolderName,
-      userId,
-    });
     res.status(400).send({ message: "All fields are required!" });
     return;
   }
   BankDetails.create({
-    userId,
-    accountNumber,
-    branchName,
-    ifscCode,
-    accountHolderName,
+    account_number,
+    branch_name,
+    ifsc_code,
+    account_holder_name,
+    user_id: userId,
   })
     .then((bankDetails) => {
       res.send({
@@ -36,4 +30,18 @@ exports.addBankDetails = (req, res) => {
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
+};
+
+exports.getBankDetails = async (req, res) => {
+  const { userId } = req.params;
+  if (!userId) {
+    res.status(400).send({ message: "User Id is required!" });
+    return;
+  }
+  const bankDetails = await BankDetails.findOne({ where: { user_id: userId } });
+  if (!bankDetails) {
+    res.status(404).send({ message: "Bank details not found!" });
+    return;
+  }
+  res.send(bankDetails);
 };

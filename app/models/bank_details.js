@@ -11,6 +11,7 @@ module.exports = (sequelize, Sequelize) => {
           model: "users",
           key: "id",
         },
+        unique: true,
       },
       account_number: {
         type: DataTypes.STRING,
