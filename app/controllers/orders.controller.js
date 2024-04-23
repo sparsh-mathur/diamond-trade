@@ -152,9 +152,13 @@ exports.confirmOrder = async (req, res) => {
     productInPortfolio.quantity -= order.quantity;
     productInPortfolio.buy_price -= order.total_price;
     userPortfolio.wallet_amount += order.total_price;
+    if (productInPortfolio.quantity === 0) {
+      await productInPortfolio.destroy();
+    } else {
+      await productInPortfolio.save();
+    }
     await order.save();
     await userPortfolio.save();
-    await productInPortfolio.save();
     res.send({ message: "Order has been approved!" });
   } catch (error) {
     console.error(error.message);
