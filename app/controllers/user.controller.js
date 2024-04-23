@@ -40,6 +40,29 @@ exports.getUserInfo = async (req, res) => {
     res.status(500).send({ message: err.message });
   }
 };
+exports.updateUserInfo = async (req, res) => {
+  const { userId } = req.params;
+  const { username } = req.body;
+  if (!userId) {
+    res.status(400).send({ message: "User ID is required!" });
+    return;
+  }
+  try {
+    const user = await Users.findByPk(userId);
+    if (!user) {
+      res.status(404).send({ message: `User with ID ${userId} not found` });
+      return;
+    }
+    user.username = username;
+    if (req.media_id) {
+      user.image_id = req.media_id;
+    }
+    await user.save();
+    res.send({ message: "User updated successfully" });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
 
 exports.deleteUser = (req, res) => {
   const { userId } = req.params;
