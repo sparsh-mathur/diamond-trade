@@ -46,13 +46,11 @@ exports.getPortfolio = async (req, res) => {
       const productInfo = productsInfo.find(
         (info) => info.id === product.product_id
       );
-      return {
-        ...product.toJSON(),
-        diamond_info: productInfo.toJSON(),
-      };
+      product.setDataValue("diamond_info", productInfo);
+      return product;
     });
-
-    res.send({ ...portfolio.toJSON(), products: productsWithInfo });
+    portfolio.setDataValue("products", productsWithInfo);
+    res.send(portfolio);
   } catch (error) {
     console.error("error in finding", error);
     res.status(500).send({ message: error.message });
