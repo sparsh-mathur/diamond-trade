@@ -11,7 +11,11 @@ module.exports = function (app) {
     [uploadImage.single("image"), MediaController.saveMedia],
     controller.createNews
   );
-  app.put("/api/news/:newsId", controller.editNews);
+  app.put(
+    "/api/news/:newsId",
+    [uploadImage.single("image"), MediaController.saveMedia],
+    controller.editNews
+  );
   app.delete("/api/news/:newsId", controller.deleteNews);
 
   app.post("/api/upload", uploadImage.single("image"), async (req, res) => {

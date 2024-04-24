@@ -128,6 +128,7 @@ exports.editDiamond = async (req, res) => {
     shape,
     color,
     manufacturing,
+    image_id: req.media_id || diamond.image_id,
   });
   if (diamond.price !== diamond.old_price) {
     await db.product_price_change.create({

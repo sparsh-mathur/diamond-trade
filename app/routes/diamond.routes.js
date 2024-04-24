@@ -10,7 +10,11 @@ module.exports = function (app) {
     controller.createDiamond
   );
   app.delete("/api/diamond/:diamondId", controller.deleteDiamond);
-  app.put("/api/diamond/:diamondId", controller.editDiamond);
+  app.put(
+    "/api/diamond/:diamondId",
+    [uploadImage.single("image"), MediaController.saveMedia],
+    controller.editDiamond
+  );
   app.get("/api/diamond/trends", controller.getTrendingDiamonds);
   app.get("/api/diamond/price-history/:diamondId", controller.getPriceHistory);
 };

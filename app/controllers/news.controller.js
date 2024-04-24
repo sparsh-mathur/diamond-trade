@@ -52,34 +52,32 @@ exports.createNews = async (req, res) => {
   }
 };
 
-exports.editNews = (req, res) => {
+exports.editNews = async (req, res) => {
   const { title, content, userId } = req.body;
   const { newsId } = req.params;
   if (!title || !content | !userId) {
     res.status(400).send({ message: "Title,content and userId are required!" });
     return;
   }
-
-  News.update(
-    {
-      title,
-      content,
-      author_id: userId,
-    },
-    {
+  try {
+    const news = await News.findOne({
       where: {
         id: newsId,
       },
-    }
-  )
-    .then((news) => {
-      res
-        .status(200)
-        .send({ message: "news updated successfully", data: news });
-    })
-    .catch((err) => {
-      res.status(500).send({ message: err.message });
     });
+    if (!news) {
+      res.status(404).send({ message: "news not found!" });
+      return;
+    }
+    news.title = title;
+    news.content = content;
+    news.author_id = userId;
+    news.image_id = req.media_id || news.image_id;
+    await news.save();
+    res.send({ message: "news updated successfully", data: news });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
 };
 
 exports.deleteNews = (req, res) => {
