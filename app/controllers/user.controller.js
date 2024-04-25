@@ -45,7 +45,7 @@ exports.getUserInfo = async (req, res) => {
 };
 exports.updateUserInfo = async (req, res) => {
   const { userId } = req.params;
-  const { username } = req.body;
+  const { username, phone, email } = req.body;
   if (!userId) {
     res.status(400).send({ message: "User ID is required!" });
     return;
@@ -57,6 +57,8 @@ exports.updateUserInfo = async (req, res) => {
       return;
     }
     user.username = username;
+    user.phone = phone;
+    user.email = email;
     if (req.media_id) {
       user.image_id = req.media_id;
     }
