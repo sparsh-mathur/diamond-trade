@@ -24,6 +24,9 @@ module.exports = (sequelize) => {
       defaultValue: "user",
       allowNull: false,
     },
+    phone: {
+      type: DataTypes.STRING,
+    },
     portfolio_id: {
       type: DataTypes.UUID,
       allowNull: true,
@@ -45,7 +48,7 @@ module.exports = (sequelize) => {
     },
   });
 
-  // User.sync({ alter: true });
+  User.sync({ alter: true });
 
   return User;
 };
