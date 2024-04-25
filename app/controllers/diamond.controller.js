@@ -194,7 +194,7 @@ exports.getPriceHistory = async (req, res) => {
         product_id: diamondId,
       },
       attributes: ["new_price", "createdAt"],
-      order: [["createdAt", "DESC"]],
+      order: [["createdAt", "ASC"]],
     });
     res.send(priceHistory);
   } catch (error) {
