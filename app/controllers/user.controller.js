@@ -3,6 +3,7 @@ const otpGenerator = require("otp-generator");
 
 const Users = require("../models").user;
 const Media = require("../models").medias;
+var bcrypt = require("bcryptjs");
 
 exports.getAllUsers = (req, res) => {
   Users.findAll({
@@ -64,6 +65,26 @@ exports.updateUserInfo = async (req, res) => {
     }
     await user.save();
     res.send({ message: "User updated successfully" });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};
+exports.updateUserPassword = async (req, res) => {
+  const { userId } = req.params;
+  const { password } = req.body;
+  if (!userId) {
+    res.status(400).send({ message: "User ID is required!" });
+    return;
+  }
+  try {
+    const user = await Users.findByPk(userId);
+    if (!user) {
+      res.status(404).send({ message: `User with ID ${userId} not found` });
+      return;
+    }
+    user.password = bcrypt.hashSync(password, 8);
+    await user.save();
+    res.send({ message: "User password updated successfully" });
   } catch (error) {
     res.status(500).send({ message: error.message });
   }

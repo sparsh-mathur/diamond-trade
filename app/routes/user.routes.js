@@ -11,6 +11,7 @@ module.exports = function (app) {
     [uploadImage.single("image"), MediaController.saveMedia],
     controller.updateUserInfo
   );
+  app.put("/api/user/update-password/:userId", controller.updateUserPassword);
   app.delete("/api/users/:userId", controller.deleteUser);
   app.get("/api/admins/all", controller.getAllAdmins);
   app.post("/api/send-email", controller.sendEmail);
