@@ -1,3 +1,6 @@
+const { sendOTPEmail } = require("../utils/nodemailer.js");
+const otpGenerator = require("otp-generator");
+
 const Users = require("../models").user;
 const Media = require("../models").medias;
 
@@ -95,4 +98,21 @@ exports.getAllAdmins = (req, res) => {
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
+};
+
+exports.sendEmail = async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    res.status(400).send({ message: "Email is required!" });
+    return;
+  }
+  const otp = otpGenerator.generate(4, {
+    digits: true,
+    upperCaseAlphabets: false,
+    lowerCaseAlphabets: false,
+    specialChars: false,
+  });
+
+  await sendOTPEmail(otp, email);
+  res.send({ message: `OTP sent successfully to ${email}`, otp });
 };

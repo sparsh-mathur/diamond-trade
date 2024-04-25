@@ -13,4 +13,5 @@ module.exports = function (app) {
   );
   app.delete("/api/users/:userId", controller.deleteUser);
   app.get("/api/admins/all", controller.getAllAdmins);
+  app.post("/api/send-email", controller.sendEmail);
 };
