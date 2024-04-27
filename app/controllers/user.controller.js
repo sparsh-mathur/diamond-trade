@@ -4,6 +4,7 @@ const otpGenerator = require("otp-generator");
 const Users = require("../models").user;
 const Media = require("../models").medias;
 var bcrypt = require("bcryptjs");
+const { orders, portfolio, bank_details } = require("../models");
 
 exports.getAllUsers = (req, res) => {
   Users.findAll({
@@ -90,12 +91,22 @@ exports.updateUserPassword = async (req, res) => {
   }
 };
 
-exports.deleteUser = (req, res) => {
+exports.deleteUser = async (req, res) => {
   const { userId } = req.params;
   if (!userId) {
     res.status(400).send({ message: "User ID is required!" });
     return;
   }
+  await orders.destroy({
+    where: {
+      user_id: userId,
+    },
+  });
+  await bank_details.destroy({
+    where: {
+      user_id: userId,
+    },
+  });
   Users.destroy({
     where: {
       id: userId,
