@@ -8,7 +8,7 @@ var bcrypt = require("bcryptjs");
 
 exports.signup = async (req, res) => {
   try {
-    const { username, email, password, phone } = req.body;
+    const { username, email, password, phone, referral_code } = req.body;
 
     if (!username || !email || !password) {
       return res
@@ -22,6 +22,7 @@ exports.signup = async (req, res) => {
       password: bcrypt.hashSync(password, 8),
       image_id: req.media_id,
       phone,
+      referral_code,
     });
     if (!user) {
       return res.status(500).send({ message: "User creation failed" });

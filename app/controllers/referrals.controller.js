@@ -1,4 +1,8 @@
-const { referrals: Referrals, user: User } = require("../models");
+const {
+  referrals: Referrals,
+  user: User,
+  portfolio: Portfolio,
+} = require("../models");
 const randomstring = require("randomstring");
 
 exports.createReferral = (req, res) => {
@@ -43,4 +47,30 @@ exports.useReferral = (req, res) => {
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
+};
+
+exports.addBenefit = async (req, res) => {
+  const { amount, userId } = req.body;
+  if (!amount || !userId) {
+    res.status(400).send({ message: "amount and user ID are required" });
+    return;
+  }
+
+  const user = User.findByPk(userId);
+  if (!user) {
+    res.status(404).send({ message: "User not found" });
+    return;
+  }
+  const userPortfolio = Portfolio.findOne({
+    where: {
+      userId,
+    },
+  });
+  if (!userPortfolio) {
+    res.status(404).send({ message: "User portfolio not found" });
+    return;
+  }
+  userPortfolio.wallet_amount += amount;
+  await userPortfolio.save();
+  res.send({ message: `Benefit of Rs ${amount} added to user's portfolio` });
 };
