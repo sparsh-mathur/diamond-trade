@@ -65,11 +65,11 @@ exports.signup = async (req, res) => {
       return res.status(500).send({ message: "Portfolio creation failed" });
     }
     user.portfolio_id = portfolio.id;
-    await user.save();
     await db.referrals.create({
       user_id: user.id,
       referral_code: user.id.toString().slice(0, 6),
     });
+    await user.save();
     res.status(200).send({ message: "User created successfully" });
   } catch (error) {
     res.status(500).send({ message: error.message });
