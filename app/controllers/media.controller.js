@@ -62,6 +62,21 @@ exports.addCarouselImage = async (req, res) => {
     url: req.file.location,
     type: "carousel",
   });
+
+  const olderImages = await Media.findAll({
+    where: {
+      type: "carousel",
+    },
+    order: [["createdAt", "ASC"]],
+    offset: 6,
+  });
+  if (olderImages.length > 0) {
+    await Media.destroy({
+      where: {
+        id: olderImages.map((image) => image.id),
+      },
+    });
+  }
   res.send({ message: "carousel image uploaded successfully" });
 };
 
@@ -90,6 +105,7 @@ exports.getCarouselImages = async (_, res) => {
       where: {
         type: "carousel",
       },
+      order: [["createdAt", "DESC"]],
       attributes: ["url"],
     });
     if (!carouselImages) {
