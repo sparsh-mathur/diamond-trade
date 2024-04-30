@@ -2,6 +2,7 @@ const db = require("../models");
 const config = require("../config/auth.config");
 const User = db.user;
 const Portfolio = db.portfolio;
+require("dotenv").config();
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
@@ -49,12 +50,12 @@ exports.signup = async (req, res) => {
           .status(404)
           .send({ message: "Referrer portfolio not found" });
       }
-      referrer_portfolio.wallet_amount += 100;
+      referrer_portfolio.wallet_amount += process.env.REFERRER_AMOUNT;
     }
 
     const portfolio = await Portfolio.create(
       {
-        wallet_amount: referral_code ? 200 : 0,
+        wallet_amount: referral_code ? process.env.REFEREE_AMOUNT : 0,
       },
       {
         returning: false,
