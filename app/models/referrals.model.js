@@ -7,7 +7,7 @@ module.exports = (sequelize) => {
       primaryKey: true,
       autoIncrement: true,
     },
-    userId: {
+    user_id: {
       type: DataTypes.UUID,
       allowNull: false,
     },
@@ -15,7 +15,7 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
     },
   });
-  // Referrals.sync({ alter: true });
+  // Referrals.sync({ force: true });
 
   return Referrals;
 };
