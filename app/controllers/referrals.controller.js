@@ -74,3 +74,25 @@ exports.addBenefit = async (req, res) => {
   await userPortfolio.save();
   res.send({ message: `Benefit of Rs ${amount} added to user's portfolio` });
 };
+
+exports.getUserReferral = async (req, res) => {
+  const { userId } = req.params;
+  if (!userId) {
+    res.status(400).send({ message: "User ID is required" });
+    return;
+  }
+  try {
+    const userReferral = await Referrals.findOne({
+      where: {
+        userId,
+      },
+    });
+    if (!userReferral) {
+      res.status(404).send({ message: "Referral code not found" });
+      return;
+    }
+    res.send(userReferral);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+};

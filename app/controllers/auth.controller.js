@@ -27,8 +27,35 @@ exports.signup = async (req, res) => {
     if (!user) {
       return res.status(500).send({ message: "User creation failed" });
     }
+    if (referral_code) {
+      const referrer = await db.referrals({
+        where: {
+          referral_code,
+        },
+      });
+      if (!referrer) {
+        return res.status(404).send({ message: "Referrer not found" });
+      }
+      const referrer_id = referrer.user_id;
+      const referrer_user = await User.findByPk(referrer_id);
+      if (!referrer_user) {
+        return res.status(404).send({ message: "Referrer not found" });
+      }
+      const referrer_portfolio = await Portfolio.findByPk(
+        referrer_user.portfolio_id
+      );
+      if (!referrer_portfolio) {
+        return res
+          .status(404)
+          .send({ message: "Referrer portfolio not found" });
+      }
+      referrer_portfolio.wallet_amount += 100;
+    }
+
     const portfolio = await Portfolio.create(
-      {},
+      {
+        wallet_amount: referral_code ? 200 : 0,
+      },
       {
         returning: false,
       }
@@ -38,6 +65,10 @@ exports.signup = async (req, res) => {
     }
     user.portfolio_id = portfolio.id;
     await user.save();
+    await db.referrals.create({
+      user_id: user.id,
+      referral_code: user.id.toString().slice(0, 6),
+    });
     res.status(200).send({ message: "User created successfully" });
   } catch (error) {
     res.status(500).send({ message: error.message });

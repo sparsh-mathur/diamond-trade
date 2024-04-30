@@ -7,10 +7,15 @@ module.exports = (sequelize) => {
       primaryKey: true,
       autoIncrement: true,
     },
-    referralCode: {
+    userId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
+    referral_code: {
       type: DataTypes.STRING,
     },
   });
+  // Referrals.sync({ alter: true });
 
   return Referrals;
 };

@@ -48,7 +48,7 @@ module.exports = (sequelize) => {
     },
   });
 
-  User.sync({ alter: true });
+  // User.sync({ alter: true });
 
   return User;
 };
