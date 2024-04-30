@@ -7,6 +7,7 @@ const sequelize = config.CLOUD_CONNECTION_STRING
   : new Sequelize(config.DB, config.USER, config.PASSWORD, {
       host: config.HOST,
       dialect: config.dialect,
+      dialectOptions: config.dialectOptions,
       pool: {
         max: config.pool.max,
         min: config.pool.min,
