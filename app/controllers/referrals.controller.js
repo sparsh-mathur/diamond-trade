@@ -84,7 +84,7 @@ exports.getUserReferral = async (req, res) => {
   try {
     const userReferral = await Referrals.findOne({
       where: {
-        userId,
+        user_id: userId,
       },
     });
     if (!userReferral) {
