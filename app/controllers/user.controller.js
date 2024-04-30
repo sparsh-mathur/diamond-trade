@@ -3,6 +3,7 @@ const otpGenerator = require("otp-generator");
 
 const Users = require("../models").user;
 const Media = require("../models").medias;
+const Payments = require("../models").payments;
 var bcrypt = require("bcryptjs");
 const { orders, portfolio, bank_details } = require("../models");
 
@@ -103,6 +104,11 @@ exports.deleteUser = async (req, res) => {
     },
   });
   await bank_details.destroy({
+    where: {
+      user_id: userId,
+    },
+  });
+  await Payments.destroy({
     where: {
       user_id: userId,
     },
