@@ -29,7 +29,7 @@ exports.signup = async (req, res) => {
       return res.status(500).send({ message: "User creation failed" });
     }
     if (referral_code) {
-      const referrer = await db.referrals({
+      const referrer = await db.referrals.findOne({
         where: {
           referral_code,
         },
