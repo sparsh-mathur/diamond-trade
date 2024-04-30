@@ -51,6 +51,7 @@ exports.signup = async (req, res) => {
           .send({ message: "Referrer portfolio not found" });
       }
       referrer_portfolio.wallet_amount += process.env.REFERRER_AMOUNT;
+      await referrer_portfolio.save();
     }
 
     const portfolio = await Portfolio.create(
