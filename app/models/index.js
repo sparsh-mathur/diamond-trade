@@ -19,9 +19,9 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
+db.medias = require("../models/media.model.js")(sequelize);
 db.portfolio = require("../models/portfolio.model.js")(sequelize);
 db.user = require("../models/user.model.js")(sequelize);
-db.medias = require("../models/media.model.js")(sequelize);
 db.diamonds = require("../models/diamonds.model.js")(sequelize);
 db.product_price_change = require("../models/product_price_change.model.js")(
   sequelize
