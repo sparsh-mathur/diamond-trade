@@ -43,7 +43,10 @@ exports.signup = async (req, res) => {
         return res.status(404).send({ message: "Referrer not found" });
       }
       const referrer_portfolio = await Portfolio.findByPk(
-        referrer_user.portfolio_id
+        referrer_user.portfolio_id,
+        {
+          attributes: ["id", "wallet_amount"],
+        }
       );
       if (!referrer_portfolio) {
         return res
